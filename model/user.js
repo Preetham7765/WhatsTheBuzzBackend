@@ -13,7 +13,8 @@ const ItemSchema = new Schema({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+    posts: [{type: Schema.ObjectId, ref: 'Events'}]
 });
 
 module.exports = Item = mongoose.model('user', ItemSchema);
