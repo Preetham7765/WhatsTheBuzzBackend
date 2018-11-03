@@ -17,8 +17,8 @@ router.get('/', (req,res)=> {
 // @desc Create a post
 // @access Public
 router.post('/', (req,res)=> {
-    const newTopic = new Topic({: req.body.username,
-        password: req.body.password, posts: []});
+    const newTopic = new Topic({title: req.body.title,description: req.body.description,author: req.body.author,
+        location: req.body.location, comments:[]});
     newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
 });
 

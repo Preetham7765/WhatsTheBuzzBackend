@@ -16,7 +16,8 @@ const TopicSchema = new Schema({
     },
     location: {
         type: { type: String },
-        coordinates: []
+        coordinates: [],
+        required: true
     },
     votes: {
         numbers: [Number],
