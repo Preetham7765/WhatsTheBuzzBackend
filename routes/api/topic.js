@@ -13,7 +13,7 @@ router.get('/', (req,res)=> {
         .then(users => res.json(users));
 });
 
-//  @route POST api/items
+//  @route POST api/topics
 // @desc Create a post
 // @access Public
 router.post('/', (req,res)=> {
