@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const EventSchema = new Schema({
+const TopicSchema = new Schema({
     title: {
         type: String,
         required: true
@@ -18,10 +18,25 @@ const EventSchema = new Schema({
         type: { type: String },
         coordinates: []
     },
+    votes: {
+        numbers: [Number],
+        default: [0,0]
+    },
+    spamCount: {
+        type: Number,
+        default: 0
+    },
+    duplicateCount:{
+        type: Number,
+        default: 0
+    },
+    comments: [{
+        type: Schema.ObjectId, ref: 'comment'
+    }],
     date: {
         type: Date,
         default: Date.now
     }
 });
 
-module.exports = Item = mongoose.model('event', EventSchema);
+module.exports = Item = mongoose.model('topic', TopicSchema);

@@ -2,17 +2,22 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const CommentSchema = new Schema({
-    commentCtr: {
+    votes: {
+        numbers: [Number],
+        default: [0,0]
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    spamCount: {
         type: Number,
-        required: true
-    },
-    authorName: {
-        type: String,
-        required: true
-    },
-    commentDesc: {
-        type: String,
-        required: true
+        default: 0
     },
     date: {
         type: Date,

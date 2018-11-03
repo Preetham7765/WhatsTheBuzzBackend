@@ -14,7 +14,7 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    posts: [{type: Schema.ObjectId, ref: 'Events'}]
+    posts: [{type: Schema.ObjectId, ref: 'topic'}]
 });
 
 module.exports = Item = mongoose.model('user', UserSchema);
