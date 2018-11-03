@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// item model
+// topic model
 const Topic = require('../../model/topic');
 
 //  @route GET api/items
@@ -18,7 +18,7 @@ router.get('/', (req,res)=> {
 // @access Public
 router.post('/', (req,res)=> {
     const newTopic = new Topic({title: req.body.title,description: req.body.description,author: req.body.author,
-        location: req.body.location, comments:[]});
+        location: req.body.location.split(',').map(Number), comments:[]});
     newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
 });
 

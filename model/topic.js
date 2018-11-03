@@ -15,7 +15,7 @@ const TopicSchema = new Schema({
         required: true
     },
     location: {
-        type: { type: String },
+        type: [Number],
         coordinates: [],
         required: true
     },

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 const items = require('./routes/api/item.js');
 const users = require('./routes/api/user.js');
-const topics = require('./routes/api/topics.js');
+const topics = require('./routes/api/topic.js');
 
 const app = express();
 
