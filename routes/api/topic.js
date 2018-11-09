@@ -1,24 +1,35 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const logger = require('morgan');
+const router = express.Router();
+const cors = require('cors');
 
+// topic model
+const Topic = require('../../model/topic');
 
-const app = express();
-app.use(bodyParser.json());
-app.use(logger('dev'));
-
-const topicRouter = express.Router();
-
-
-topicRouter.route("/")
-.all((req,res,next) => {
-
-})
-.get((req,res) => {
-
-})
-.post((req,res) => {
-
+//  @route GET api/items
+// @desc Get all items
+// @access Public
+router.get('/', cors(),(req,res)=> {
+    Topic.find()
+        .sort({date: -1})
+        .then(users => res.json(users));
 });
 
-module.export = topicRouter;
+//  @route POST api/topics
+// @desc Create a post
+// @access Public
+router.post('/', (req,res)=> {
+    const newTopic = new Topic({title: req.body.title,description: req.body.description,author: req.body.author,
+        location: req.body.location.coordinates, comments:[]});
+    newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
+});
+
+//  @route Delete api/items/:id
+// @desc Delete a item
+// @access Public
+router.delete('/:id', (req,res)=> {
+    Topic.findById(req.params.id)
+        .then(item => item.remove().then(() => res.json({success: true})))
+        .catch(err => res.status(404).json({success: false}));
+});
+
+module.exports = router;

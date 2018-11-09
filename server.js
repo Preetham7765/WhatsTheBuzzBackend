@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 
 const items = require('./routes/api/item.js');
 const users = require('./routes/api/user.js');
+const topics = require('./routes/api/topic.js');
 
 const app = express();
 
@@ -21,6 +22,7 @@ mongoose.connect(db).then(()=>{
 // Use Routes
 app.use('/api/items', items);
 app.use('/api/users', users);
+app.use('/api/topics', topics);
 
 const port = process.env.PORT || 5000;
 
