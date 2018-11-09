@@ -12,7 +12,7 @@ To check api:
 1) use postman to make get, post, delete, etc requests
 
 
-###Comments:
+### Comments:
 
 **Endpoints:**
 1.  Post Comment (method = POST, endpoint='/api/comments/'):
