@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-
+const cors = require('cors');
 // topic model
 const Topic = require('../../model/topic');
 
 //  @route GET api/items
 // @desc Get all items
 // @access Public
-router.get('/', (req,res)=> {
+router.get('/', cors(),(req,res)=> {
     Topic.find()
         .sort({date: -1})
         .then(users => res.json(users));

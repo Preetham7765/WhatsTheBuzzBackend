@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const CommentSchema = new Schema({
     votes: {
-        numbers: [Number],
-        default: [0,0]
+        type: Number,
+        default: 0
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
