@@ -14,7 +14,7 @@ To check api:
 
 ### Comments:
 
-**Endpoints:**
+**API's:**
 1.  Post Comment (method = POST, endpoint='/api/comments/'):
 
     ```
