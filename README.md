@@ -70,9 +70,9 @@ To check api:
 
 3.  Upvote/Downvote Comments
     
-    Upvote (method = PUT, endpoint='/api/comments/upvote/{comment_id}')
+    Upvote (method = PUT, endpoint='/api/comments/upvote/{userid}/{commentid}/')
    
-    Downvote (method = PUT, endpoint='/api/comments/downvote/{comment_id}')
+    Downvote (method = PUT, endpoint='/api/comments/downvote/{userid}/{commentid}/')
    
     Calling one of them will manipulate the votes for a certain comment
    
