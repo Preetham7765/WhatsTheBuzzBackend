@@ -16,7 +16,7 @@ router.get('/', cors(),(req,res)=> {
     Topic.find({
             "loc": {
                 $geoWithin : {
-                    $centerSphere: [[longitude, latitude], 3/6378]
+                    $centerSphere: [[longitude, latitude], 4/6378]
                 }
                 
             
