@@ -6,6 +6,10 @@ const CommentSchema = new Schema({
         type: Number,
         default: 0
     },
+    votedby:{
+        type: [mongoose.Schema.Types.ObjectId],
+        default:[]
+    },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

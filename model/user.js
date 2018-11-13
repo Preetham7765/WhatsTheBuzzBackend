@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+
+
 const UserSchema = new Schema({
     username: {
         type: String,
@@ -9,6 +11,14 @@ const UserSchema = new Schema({
     password: {
         type: String,
         required: true
+    },
+    rank:{
+        type: Number,
+        default: 0
+    },
+    reputationScore: {
+        type : Number,
+        default : 0
     },
     date: {
         type: Date,

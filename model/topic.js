@@ -19,8 +19,12 @@ const TopicSchema = new Schema({
         coordinates: { type: [ Number ] },
     },
     votes: {
-        numbers: [Number],
-        default: [0,0]
+        type: Number,
+        default: 0
+    },
+    votedby:{
+        type: [mongoose.Schema.Types.ObjectId],
+        default:[]
     },
     spamCount: {
         type: Number,
