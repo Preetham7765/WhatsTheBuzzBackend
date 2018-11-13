@@ -14,14 +14,20 @@ const TopicSchema = new Schema({
         ref: 'User',
         required: true
     },
-    location: {
-        type: [Number],
-        coordinates: [],
-        required: true
+    loc: {
+        type: { type: String, enum: "Point", default: "Point"},
+        coordinates: { type: [ Number ] },
+    },
+    expireAt :{
+        type: Date,
     },
     votes: {
-        numbers: [Number],
-        default: [0,0]
+        type: Number,
+        default: 0
+    },
+    votedby:{
+        type: [mongoose.Schema.Types.ObjectId],
+        default:[]
     },
     spamCount: {
         type: Number,
@@ -39,5 +45,5 @@ const TopicSchema = new Schema({
         default: Date.now
     }
 });
-
+TopicSchema.index({"loc": "2dsphere"});
 module.exports = Item = mongoose.model('topic', TopicSchema);

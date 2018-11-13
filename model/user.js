@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+
+
 const UserSchema = new Schema({
     firstName: {
         type: String,
@@ -18,13 +20,19 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-
-    posts: [{type: Schema.ObjectId, ref: 'topic'}],
-
-
-
-
-
+    rank:{
+        type: Number,
+        default: 0
+    },
+    reputationScore: {
+        type : Number,
+        default : 0
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    posts: [{type: Schema.ObjectId, ref: 'topic'}]
 });
 
 module.exports = Item = mongoose.model('user', UserSchema);
