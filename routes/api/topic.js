@@ -45,6 +45,36 @@ router.post('/', (req,res)=> {
     
 });
 
+// @route PUT api/topics
+// @desc Add the vote
+// @access Public
+router.put('/upvote/:userid/:topicid/', cors(), (request, response) => {
+    var authorId = null;
+    Topic.findOneAndUpdate({ _id : request.params.topicid }, { $inc: { votes : 1 }, $push : { votedby : request.params.userid } })
+        .then(item => {
+            authorId = item.author;
+            Author.findOneAndUpdate({_id :  authorId}, {$inc : {reputationScore : 2} })
+                .catch(err => console.log(err));
+            response.json(item);
+        })
+        .catch(err => console.log(err));
+});
+
+// @route PUT api/topics
+// @desc Remove the vote
+// @access Public
+router.put('/downvote/:userid/:topicid/', cors(), (request, response) => {
+    var authorId = null;
+    Topic.findOneAndUpdate({ _id : request.params.topicid }, { $inc: { votes : -1 },  $pull : { votedby : request.params.userid } })
+        .then(item => {
+            authorId = item.author;
+            Author.findOneAndUpdate({_id :  authorId}, {$inc : {reputationScore : -2}})
+                .catch(err => console.log(err));
+            response.json(item);
+        })
+        .catch(err => console.log(err));
+});
+
 //  @route Delete api/items/:id
 // @desc Delete a item
 // @access Public
