@@ -4,3 +4,4 @@ bin/*
 /bin/
 *.iml
 node_modules/*
+./nyc_output
