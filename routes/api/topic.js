@@ -34,10 +34,13 @@ router.get('/', cors(),(req,res)=> {
 router.post('/', (req,res)=> {
     Author.findOne({'username': req.body.author})
     .then(author => {
+        const currDate = new Date();
+        //Have to create db.comments.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } ) in the database to make ttl active
+        const expireAtDateTime = currDate.setMinutes(currDate.getMinutes() + req.body.duration);
         const userLocation = [...req.body.location].map( el => parseFloat(el));
         console.log("location",userLocation);
         const newTopic = new Topic({title: req.body.title,description: req.body.description, author: author,
-            loc: { type: 'Point', coordinates: userLocation } , comments:[]});
+            loc: { type: 'Point', coordinates: userLocation } , comments:[], expireAt: expireAtDateTime});
         // console.log(newTopic);
         newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
     })
