@@ -4,7 +4,8 @@
   "description": "Tutorial for mern stack",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nyc mocha",
+    "test-cover": "inpm install --save-dev nyc",
     "start": "node server.js",
     "server": "nodemon server.js"
   },
@@ -16,12 +17,18 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
     "concurrently": "^4.0.1",
     "cors": "^2.8.4",
     "express": "^4.16.4",
-    "mongoose": "^5.3.7"
+    "mocha": "^5.2.0",
+    "mongoose": "^5.3.7",
+    "nodemailer": "^4.6.8"
   },
   "devDependencies": {
-    "nodemon": "^1.18.5"
+    "istanbul": "^0.4.5",
+    "nodemon": "^1.18.5",
+    "nyc": "^13.1.0"
   }
 }
