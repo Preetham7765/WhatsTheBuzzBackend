@@ -23,7 +23,8 @@
     "cors": "^2.8.4",
     "express": "^4.16.4",
     "mocha": "^5.2.0",
-    "mongoose": "^5.3.7"
+    "mongoose": "^5.3.7",
+    "nodemailer": "^4.6.8"
   },
   "devDependencies": {
     "istanbul": "^0.4.5",
