@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const request = require('request');
+
 
 // topic model
 const Topic = require('../../model/topic');
@@ -18,8 +20,8 @@ router.get('/', cors(),(req,res)=> {
                 $geoWithin : {
                     $centerSphere: [[longitude, latitude], 4/6378]
                 }
-                
-            
+
+
         }})
         .then(topics => {
             console.log("sending topics", topics);
@@ -32,19 +34,23 @@ router.get('/', cors(),(req,res)=> {
 // @desc Create a post
 // @access Public
 router.post('/', (req,res)=> {
-    Author.findOne({'username': req.body.author})
+    Author.findById(req.body.author)
     .then(author => {
         const currDate = new Date();
         //Have to create db.comments.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } ) in the database to make ttl active
         const expireAtDateTime = currDate.setMinutes(currDate.getMinutes() + req.body.duration);
         const userLocation = [...req.body.location].map( el => parseFloat(el));
-        console.log("location",userLocation);
+        request.post("http://127.0.0.1:5001/body",
+            {json : userLocation},
+            (err, res, body) => {
+                console.log(body);
+            })
         const newTopic = new Topic({title: req.body.title,description: req.body.description, author: author,
             loc: { type: 'Point', coordinates: userLocation } , comments:[], expireAt: expireAtDateTime});
         // console.log(newTopic);
-        newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
+        //newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
     })
-    .catch(err => {console.log("Cannot find author" , req.body.author)});
+    .catch(err => {console.log(err)});
     
 });
 
