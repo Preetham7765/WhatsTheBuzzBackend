@@ -18,6 +18,9 @@ const TopicSchema = new Schema({
         type: { type: String, enum: "Point", default: "Point"},
         coordinates: { type: [ Number ] },
     },
+    region:{
+        type: String,
+    },
     expireAt :{
         type: Date,
     },
