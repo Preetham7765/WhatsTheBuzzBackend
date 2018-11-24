@@ -18,8 +18,6 @@ router.get('/', cors(),(req,res)=> {
                 $geoWithin : {
                     $centerSphere: [[longitude, latitude], 4/6378]
                 }
-                
-            
         }})
         .then(topics => {
             console.log("sending topics", topics);
