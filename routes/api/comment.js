@@ -60,6 +60,8 @@ module.exports = function (io) {
                     newCommentData.text = comment.description;
                     newCommentData.position = topic.comments.length - 1;
                     newCommentData.createdAt = comment.date;
+                    newCommentData.votes = 0;
+                    newCommentData.votedby = [];
                     console.log("broadcasting to all chat room ", clientList);
                     socket.broadcast.to('room-' + clientList[socket.id]).emit("newComment", newCommentData);
                     socket.emit("newComment", newCommentData);
@@ -116,6 +118,8 @@ module.exports = function (io) {
                                             position: itr,
                                             text: comment.description,
                                             createdAt: comment.date,
+                                            votes : comment.votes,
+                                            votedby : comment.votedby,
                                             user: {
                                                 _id: comment.author,
                                                 name: author.username,
