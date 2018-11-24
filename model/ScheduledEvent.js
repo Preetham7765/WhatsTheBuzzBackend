@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const TopicSchema = new Schema({
+const ScheduledEvent = new Schema({
     title: {
         type: String,
         required: true
     },
     description: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
@@ -51,14 +51,4 @@ const TopicSchema = new Schema({
         default: Date.now
     }
 });
-TopicSchema.index({"loc": "2dsphere"});
-TopicSchema.index({ "expireAt" : 1 }, { expireAfterSeconds: 0 })
-
-let topicSchema = null;
-try{
-    topicSchema = mongoose.model('topic', TopicSchema);
-}catch (e) {
-    topicSchema = mongoose.model('topic');
-}
-
-module.exports = Item = topicSchema;
+module.exports = Item = mongoose.model('scheduledEvent', ScheduledEvent);
