@@ -21,6 +21,9 @@ const TopicSchema = new Schema({
     region:{
         type: String,
     },
+    startAt:{
+        type: Date,
+    },
     expireAt :{
         type: Date,
     },
@@ -49,4 +52,13 @@ const TopicSchema = new Schema({
     }
 });
 TopicSchema.index({"loc": "2dsphere"});
-module.exports = Item = mongoose.model('topic', TopicSchema);
+TopicSchema.index({ "expireAt" : 1 }, { expireAfterSeconds: 0 })
+
+let topicSchema = null;
+try{
+    topicSchema = mongoose.model('topic', TopicSchema);
+}catch (e) {
+    topicSchema = mongoose.model('topic');
+}
+
+module.exports = Item = topicSchema;
