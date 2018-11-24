@@ -66,6 +66,8 @@ router.get('/:topicId', cors(), (request, response) => {
                     _id: comment._id,
                     text: comment.description,
                     createdAt: comment.date,
+                    votes : comment.votes,
+                    votedby : comment.votedby,
                     user : {
                         _id: comment.author,
                         name: author.username,
