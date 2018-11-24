@@ -1,11 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
 const items = require('./routes/api/item.js');
 const users = require('./routes/api/user.js');
 const topics = require('./routes/api/topic.js');
 const comments = require('./routes/api/comment.js');
+const scheduler = require('./services/scheduler.js');
 const app = express();
 
 //Body parser middleware
