@@ -23,7 +23,7 @@ router.get('/', cors(),(req,res)=> {
                 }
         }})
         .then(topics => {
-            console.log("sending topics", topics);
+            // console.log("sending topics", topics);
             res.json(topics);
         })
         .catch( error => {console.log("could not find any topics near by")});
@@ -38,7 +38,7 @@ router.post('/', (req,res)=> {
         //Have to create db.comments.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } ) in the database to make ttl active
         var currDate = new Date();
         var startDate, endDate, expireAtDateTime
-        if(req.body.startAt){
+        if(req.body.topicType === 'Event'){
             startDate = new Date(req.body.startAt);
             endDate = startDate.setMinutes(startDate.getMinutes() + req.body.duration);
         }else{
@@ -53,7 +53,7 @@ router.post('/', (req,res)=> {
                 console.log(body);
             })
 
-        if(req.body.startAt){
+        if(req.body.topicType === 'Event'){
             const newScheduledEvent = new ScheduledEvent({
                 title: req.body.title,
                 description: req.body.description,
@@ -61,7 +61,8 @@ router.post('/', (req,res)=> {
                 loc: { type: 'Point', coordinates: userLocation } ,
                 comments:[],
                 startAt: req.body.startAt,
-                expireAt: endDate
+                expireAt: req.body.expireAt,
+                topicType: req.body.topicType
             })
             newScheduledEvent.save().then(user => res.json(user)).catch(error => console.log(error));
         }
@@ -73,7 +74,8 @@ router.post('/', (req,res)=> {
                 loc: { type: 'Point', coordinates: userLocation } ,
                 comments:[],
                 startAt: Date.now(),
-                expireAt: expireAtDateTime
+                expireAt: expireAtDateTime,
+                topicType: req.body.topicType
             });
             newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
         }

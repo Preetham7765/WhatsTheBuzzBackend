@@ -20,7 +20,7 @@
     "chai": "^4.2.0",
     "chai-http": "^4.2.0",
     "es6-promise": "^4.2.5",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
     "concurrently": "^4.1.0",
     "cors": "^2.8.5",
     "express": "^4.16.4",
