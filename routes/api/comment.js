@@ -64,14 +64,15 @@ module.exports = function (io) {
                     newCommentData.votedby = [];
                     console.log("broadcasting to all chat room ", clientList);
                     socket.broadcast.to('room-' + clientList[socket.id]).emit("newComment", newCommentData);
-                    socket.emit("newComment", newCommentData);
+                    socket.send(newCommentData);
+                    // socket.emit("newComment", newCommentData);
                 })
                 .catch((error) => {
                     console.log("error", error);
                     // response.status(400);
                     // response.statusMessage = "Malformed data";
                     // reponse.end()
-                    socket.emit("status", error);
+                    socket.send("Error");
 
                 });
 
@@ -88,7 +89,7 @@ module.exports = function (io) {
         const topicId = request.params.topicId;
 
         Topic.findOne({ "_id": topicId })
-            .populate({ path: 'comments', options: { sort: { 'date': "descending" } } })
+            .populate({ path: 'comments', options: { sort: { 'date': "ascending" } } })
             .exec()
             .then(topic => {
 
