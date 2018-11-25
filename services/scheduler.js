@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const ScheduledEvent = require('../model/ScheduledEvent');
-const Topic = require('../model/Topic');
+const Topic = require('../model/topic');
 mongoose.connect('mongodb://admin:oosd-team-1@ds143683.mlab.com:43683/mern_tut');
 
 var scheduler = () => setInterval(() => {
