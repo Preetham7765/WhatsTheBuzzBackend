@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const request = require('request');
+
 
 // topic model
 const Topic = require('../../model/topic');
 const Author = require('../../model/user');
+const ScheduledEvent = require('../../model/ScheduledEvent');
 
 //  @route GET api/items
 // @desc Get all items
@@ -20,7 +23,7 @@ router.get('/', cors(),(req,res)=> {
                 }
         }})
         .then(topics => {
-            console.log("sending topics", topics);
+            // console.log("sending topics", topics);
             res.json(topics);
         })
         .catch( error => {console.log("could not find any topics near by")});
@@ -30,20 +33,55 @@ router.get('/', cors(),(req,res)=> {
 // @desc Create a post
 // @access Public
 router.post('/', (req,res)=> {
-    Author.findOne({'username': req.body.author})
+    Author.findById(req.body.author)
     .then(author => {
-        const currDate = new Date();
         //Have to create db.comments.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } ) in the database to make ttl active
-        const expireAtDateTime = currDate.setMinutes(currDate.getMinutes() + req.body.duration);
+        var currDate = new Date();
+        var startDate, endDate, expireAtDateTime
+        if(req.body.topicType === 'Event'){
+            startDate = new Date(req.body.startAt);
+            endDate = startDate.setMinutes(startDate.getMinutes() + req.body.duration);
+        }else{
+            currDate = new Date();
+            expireAtDateTime = currDate.setMinutes(currDate.getMinutes() + req.body.duration);
+        }
+
         const userLocation = [...req.body.location].map( el => parseFloat(el));
-        console.log("location",userLocation);
-        const newTopic = new Topic({title: req.body.title,description: req.body.description, author: author,
-            loc: { type: 'Point', coordinates: userLocation } , comments:[], expireAt: expireAtDateTime});
+        request.post("http://127.0.0.1:5001/body",
+            {json : userLocation},
+            (err, res, body) => {
+                console.log(body);
+            })
+
+        if(req.body.topicType === 'Event'){
+            const newScheduledEvent = new ScheduledEvent({
+                title: req.body.title,
+                description: req.body.description,
+                author: author,
+                loc: { type: 'Point', coordinates: userLocation } ,
+                comments:[],
+                startAt: req.body.startAt,
+                expireAt: req.body.expireAt,
+                topicType: req.body.topicType
+            })
+            newScheduledEvent.save().then(user => res.json(user)).catch(error => console.log(error));
+        }
+        else {
+            const newTopic = new Topic({
+                title: req.body.title,
+                description: req.body.description,
+                author: author,
+                loc: { type: 'Point', coordinates: userLocation } ,
+                comments:[],
+                startAt: Date.now(),
+                expireAt: expireAtDateTime,
+                topicType: req.body.topicType
+            });
+            newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
+        }
         // console.log(newTopic);
-        newTopic.save().then(user => res.json(user)).catch(err => console.log(err));
     })
-    .catch(err => {console.log("Cannot find author" , req.body.author)});
-    
+    .catch(err => {console.log("undefined error here" , err)});
 });
 
 // @route PUT api/topics
