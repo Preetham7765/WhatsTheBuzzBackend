@@ -3,8 +3,9 @@ const ScheduledEvent = require('../model/ScheduledEvent');
 const Topic = require('../model/Topic');
 mongoose.connect('mongodb://admin:oosd-team-1@ds143683.mlab.com:43683/mern_tut');
 
-var scheduler = setInterval(() => {
+var scheduler = () => setInterval(() => {
     var currDateTime = new Date();
+    //console.log("scheduler running");
     ScheduledEvent.find({"startAt": {$lte: Math.floor(currDateTime)}},
         (err, scheduledEvents) => {
             if (err) {
@@ -24,7 +25,8 @@ var scheduler = setInterval(() => {
                     loc: { type: 'Point', coordinates: event.loc.coordinates } ,
                     comments:[],
                     startAt: event.startAt,
-                    expireAt: event.expireAt
+                    expireAt: event.expireAt,
+                    topicType: event.topicType
                 });
                 newTopic.save().catch(err => console.log(err));
 

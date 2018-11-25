@@ -27,6 +27,10 @@ const ScheduledEvent = new Schema({
     expireAt :{
         type: Date,
     },
+    topicType:{
+        type: String,
+        required: true
+    },
     votes: {
         type: Number,
         default: 0
