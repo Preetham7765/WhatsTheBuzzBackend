@@ -64,7 +64,7 @@ module.exports = function (io) {
                     newCommentData.votedby = [];
                     console.log("broadcasting to all chat room ", clientList);
                     socket.broadcast.to('room-' + clientList[socket.id]).emit("newComment", newCommentData);
-                    socket.send(newCommentData);
+                    socket.emit("addCommentStatus",newCommentData);
                     // socket.emit("newComment", newCommentData);
                 })
                 .catch((error) => {
@@ -72,7 +72,7 @@ module.exports = function (io) {
                     // response.status(400);
                     // response.statusMessage = "Malformed data";
                     // reponse.end()
-                    socket.send("Error");
+                    socket.emit("addCommentStatus",newCommentData);
 
                 });
 
