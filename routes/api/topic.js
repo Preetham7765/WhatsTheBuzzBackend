@@ -61,7 +61,7 @@ router.post('/', (req,res)=> {
                 loc: { type: 'Point', coordinates: userLocation } ,
                 comments:[],
                 startAt: req.body.startAt,
-                expireAt: req.body.expireAt,
+                expireAt: endDate,
                 topicType: req.body.topicType
             })
             newScheduledEvent.save().then(user => res.json(user)).catch(error => console.log(error));
