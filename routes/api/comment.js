@@ -100,7 +100,9 @@ module.exports = function (io) {
                         location: topic.loc.coordinates,
                         time: topic.date,
                         description: topic.description,
-                        comments: []
+                        comments: [],
+                        votes : topic.votes,
+                        votedby : topic.votedby
                     }
                 }
 
