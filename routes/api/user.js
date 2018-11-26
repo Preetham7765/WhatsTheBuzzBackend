@@ -14,6 +14,13 @@ router.get('/', (req,res)=> {
        .then(users => res.json(users));
 });
 
+
+router.get('/:id', (req,res)=> {
+    User.findById(req.params.id)
+        .then(users => res.json(users).then(() => res.json({sucess: true})))
+        .catch(err => res.status(404).json({success: false}));
+});
+
 //  @route POST api/items
 // @desc Create a post
 // @access Public
@@ -38,7 +45,7 @@ router.post('/login', (req,res)=> {
             return res.status(404).send();
         }
 
-        return res.status(200).send();
+        return res.status(200).send({userId : user._id, enterpriseActive: user.enterpriseActive, enterprise: user.enterprise});
     });
     //newUser.save().then(user => res.json(user)).catch(err => console.log(err));
 });
@@ -92,14 +99,13 @@ router.post('/enterprise', (req, res) =>{
        enterpriseActive: "pending",
        posts :[]
    })
-    intimateUser(req.body.email);
 
     enterpriseUser.save()
         .then((user) => {
             res.status(200);
             res.json(user);
+            //intimateUser(req.body.email);
         })
-        .catch(err => console.log(err));
 });
 
 
