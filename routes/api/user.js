@@ -14,6 +14,13 @@ router.get('/', (req,res)=> {
        .then(users => res.json(users));
 });
 
+
+router.get('/:id', (req,res)=> {
+    User.findById(req.params.id)
+        .then(users => res.json(users).then(() => res.json({sucess: true})))
+        .catch(err => res.status(404).json({success: false}));
+});
+
 //  @route POST api/items
 // @desc Create a post
 // @access Public
