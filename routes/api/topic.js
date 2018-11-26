@@ -40,7 +40,7 @@ router.post('/', (req,res)=> {
         var startDate, endDate, expireAtDateTime
         if(req.body.topicType === 'Event'){
             startDate = new Date(req.body.startAt);
-            endDate = startDate.setMinutes(startDate.getMinutes() + req.body.duration);
+            endDate = new Date(req.body.expireAt);
         }else{
             currDate = new Date();
             expireAtDateTime = currDate.setMinutes(currDate.getMinutes() + req.body.duration);
@@ -60,7 +60,7 @@ router.post('/', (req,res)=> {
                 author: author,
                 loc: { type: 'Point', coordinates: userLocation } ,
                 comments:[],
-                startAt: req.body.startAt,
+                startAt: startDate,
                 expireAt: endDate,
                 topicType: req.body.topicType
             })
