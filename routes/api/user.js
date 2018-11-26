@@ -45,7 +45,7 @@ router.post('/login', (req,res)=> {
             return res.status(404).send();
         }
 
-        return res.status(200).send();
+        return res.status(200).send({userId : user._id, enterpriseActive: user.enterpriseActive, enterprise: user.enterprise});
     });
     //newUser.save().then(user => res.json(user)).catch(err => console.log(err));
 });
@@ -99,14 +99,13 @@ router.post('/enterprise', (req, res) =>{
        enterpriseActive: "pending",
        posts :[]
    })
-    intimateUser(req.body.email);
 
     enterpriseUser.save()
         .then((user) => {
             res.status(200);
             res.json(user);
+            //intimateUser(req.body.email);
         })
-        .catch(err => console.log(err));
 });
 
 
