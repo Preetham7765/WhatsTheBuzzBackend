@@ -39,15 +39,18 @@ router.post('/isUserPresent', (req,res)=> {
         console.log(user);
         if(err){
             console.log(err);
-            return res.status(500).send();
+           // return res.status(500).send();
+            res.send({'success':false,'message':'Could not connect to Database'})
         }
 
         if(!user){
             console.log("not found");
-            return res.status(404).send();
+            res.send({'success':false,'message':'User not found'})
+            //return res.status(404).send();
         }
 
-        return res.status(200).send();
+        //return res.status(200).send();
+        res.send({'success':true, 'userId':user._id, 'username':user.username});
     });
 
 });
@@ -69,15 +72,17 @@ router.post('/login', (req,res)=> {
         console.log(user);
         if(err){
             console.log(err);
-            return res.status(500).send();
+            //return res.status(500).send();
+            res.send({'success':false,'message':'Could not connect to Database'})
         }
 
         if(!user){
             console.log("not found");
-            return res.status(404).send();
+            res.send({'success':false,'message':'User not found'})
+            //return res.status(404).send();
         }
-
-        return res.status(200).send({userId : user._id, enterpriseActive: user.enterpriseActive, enterprise: user.enterprise});
+        res.send({'success':true, 'userId':user._id, 'username':user.username});
+        //return res.status(200).send({userId : user._id, enterpriseActive: user.enterpriseActive, enterprise: user.enterprise});
     });
     //newUser.save().then(user => res.json(user)).catch(err => console.log(err));
 });
@@ -101,6 +106,7 @@ router.post('/googleSignUp', (req,res)=> {
         signInMode: 'google', email:req.body.email, posts: []});
     console.log(newUser);
     newUser.save().then(user => res.json(user)).catch(err => console.log(err));
+    res.send({'success':true, 'userId':user._id, 'username':user.username});
 });
 
 function intimateUser(mailAddress){
