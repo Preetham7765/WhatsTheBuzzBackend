@@ -15,11 +15,43 @@ router.get('/', (req,res)=> {
 });
 
 
+
 router.get('/:id', (req,res)=> {
     User.findById(req.params.id)
         .then(users => res.json(users).then(() => res.json({sucess: true})))
         .catch(err => res.status(404).json({success: false}));
 });
+
+
+//  @route GET api/items
+// @desc Get all items
+// @access Public
+router.post('/isUserPresent', (req,res)=> {
+    console.log("reached isUserPresent");
+
+    console.log("reached lgin");
+    console.log(req.body.username);
+    //console.log(req.body.password);
+    const user = new User({username: req.body.username,signInMode: 'google'});
+
+    User.findOne({username: req.body.username,signInMode: 'google'}, function(err,user)
+    {
+        console.log(user);
+        if(err){
+            console.log(err);
+            return res.status(500).send();
+        }
+
+        if(!user){
+            console.log("not found");
+            return res.status(404).send();
+        }
+
+        return res.status(200).send();
+    });
+
+});
+
 
 //  @route POST api/items
 // @desc Create a post
@@ -57,6 +89,17 @@ router.post('/register', (req,res)=> {
     console.log("reached");
     const newUser = new User({firstName:req.body.firstName, lastName:req.body.lastName,username: req.body.username,
         password: req.body.password, posts: []});
+    newUser.save().then(user => res.json(user)).catch(err => console.log(err));
+});
+
+//  @route POST api/items
+// @desc Create a post
+// @access Public
+router.post('/googleSignUp', (req,res)=> {
+    console.log("reached googleSignUp");
+    const newUser = new User({firstName:req.body.firstName, lastName:req.body.lastName,username: req.body.username,
+        signInMode: 'google', email:req.body.email, posts: []});
+    console.log(newUser);
     newUser.save().then(user => res.json(user)).catch(err => console.log(err));
 });
 

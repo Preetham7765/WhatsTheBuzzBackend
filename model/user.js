@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 
 
 const UserSchema = new Schema({
-    firstname: {
+    firstName: {
         type: String,
         required: true
     },
-    lastname:{
+    lastName:{
         type : String,
         required: true
     },
@@ -22,7 +22,7 @@ const UserSchema = new Schema({
     },
     password: {
         type: String,
-        required: true
+        required: false
     },
     enterprise: {
         type : Boolean,
@@ -43,6 +43,10 @@ const UserSchema = new Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    signInMode: {
+        type: String,
+        default: "App"
     },
     posts: [{type: Schema.ObjectId, ref: 'topic'}]
 });
