@@ -69,14 +69,16 @@ router.post('/login', (req, res) => {
                 user.comparePassword(req.body.password, (err, isMatch) => {
 
                     if (!err && isMatch) {
-                        const token = jwt.sign(user.toJSON(), config.secret);
-                        res.status(200).json({
-                            success: true, token: 'JWT' + token, data: {
-                                userId: user._id,
-                                enterpriseActive: user.enterpriseActive,
-                                enterprise: user.enterprise
-                            }
-                        });
+                        jwt.sign(user.toJSON(), config.secret, { expiresIn: 86400 * 7 },
+                            (err, token) => {
+                                res.status(200).json({
+                                    success: true, token: 'Bearer ' + token, data: {
+                                        userId: user._id,
+                                        enterpriseActive: user.enterpriseActive,
+                                        enterprise: user.enterprise
+                                    }
+                                });
+                            });
                     }
                     else {
                         res.status(401).json({ success: false, msg: 'Authentication failed. Wrong password.' });
