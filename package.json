@@ -16,17 +16,21 @@
   "author": "Chris East",
   "license": "MIT",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "chai-http": "^4.2.0",
-    "es6-promise": "^4.2.5",
-    "request": "^2.88.0",
     "concurrently": "^4.1.0",
     "cors": "^2.8.5",
+    "es6-promise": "^4.2.5",
     "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
     "mocha": "^5.2.0",
     "mongoose": "^5.3.13",
     "nodemailer": "^4.7.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "request": "^2.88.0",
     "socket.io": "^2.1.1"
   },
   "devDependencies": {

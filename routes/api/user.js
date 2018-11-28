@@ -1,5 +1,9 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const passport = require('passport');
+const config = require('../../config/keys');
+require('../../config/passport')(passport)
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 // item model
@@ -8,41 +12,38 @@ const User = require('../../model/user');
 //  @route GET api/items
 // @desc Get all items
 // @access Public
-router.get('/', (req,res)=> {
-   User.find()
-       .sort({date: -1})
-       .then(users => res.json(users));
+router.get('/', (req, res) => {
+    User.find()
+        .sort({ date: -1 })
+        .then(users => res.json(users));
 });
 
-
-
-router.get('/:id', (req,res)=> {
+router.get('/:id', (req, res) => {
     User.findById(req.params.id)
-        .then(users => res.json(users).then(() => res.json({sucess: true})))
-        .catch(err => res.status(404).json({success: false}));
+        .then(users => res.json(users).then(() => res.json({ sucess: true })))
+        .catch(err => res.status(404).json({ success: false }));
 });
 
 
 //  @route GET api/items
 // @desc Get all items
 // @access Public
-router.post('/isUserPresent', (req,res)=> {
+router.post('/isUserPresent', (req, res) => {
     console.log("reached isUserPresent");
 
     console.log("reached lgin");
     console.log(req.body.username);
     //console.log(req.body.password);
-    const user = new User({username: req.body.username,signInMode: 'google'});
+    const user = new User({ username: req.body.username, signInMode: 'google' });
 
-    User.findOne({username: req.body.username,signInMode: 'google'}, function(err,user)
-    {
+    User.findOne({ username: req.body.username, signInMode: 'google' }, function (err, user) {
         console.log(user);
-        if(err){
+        if (err) {
             console.log(err);
             return res.status(500).send();
         }
 
-        if(!user){
+        if (!user) {
             console.log("not found");
             return res.status(404).send();
         }
@@ -56,54 +57,81 @@ router.post('/isUserPresent', (req,res)=> {
 //  @route POST api/items
 // @desc Create a post
 // @access Public
-router.post('/login', (req,res)=> {
-    console.log("reached lgin");
-    console.log(req.body.username);
-    console.log(req.body.password);
-    const user = new User({username: req.body.username,
-        password: req.body.password});
+router.post('/login', (req, res) => {
 
-    User.findOne({username: req.body.username,
-        password: req.body.password}, function(err,user)
-    {
-        console.log(user);
-        if(err){
-            console.log(err);
-            return res.status(500).send();
-        }
+    User.findOne({
+        username: req.body.username
+    })
+        .then(user => {
+            if (!user)
+                res.status(401).json({ success: false, msg: 'Authentication failed. User not found.' });
+            else
+                user.comparePassword(req.body.password, (err, isMatch) => {
 
-        if(!user){
-            console.log("not found");
-            return res.status(404).send();
-        }
-
-        return res.status(200).send({userId : user._id, enterpriseActive: user.enterpriseActive, enterprise: user.enterprise});
-    });
-    //newUser.save().then(user => res.json(user)).catch(err => console.log(err));
+                    if (!err && isMatch) {
+                        const token = jwt.sign(user.toJSON(), config.secret);
+                        res.status(200).json({
+                            success: true, token: 'JWT' + token, data: {
+                                userId: user._id,
+                                enterpriseActive: user.enterpriseActive,
+                                enterprise: user.enterprise
+                            }
+                        });
+                    }
+                    else {
+                        res.status(401).json({ success: false, msg: 'Authentication failed. Wrong password.' });
+                    }
+                });
+        })
+        .catch(error => {
+            throw error;
+        });
 });
 
 //  @route POST api/items
 // @desc Create a post
 // @access Public
-router.post('/register', (req,res)=> {
-    console.log("reached");
-    const newUser = new User({firstName:req.body.firstName, lastName:req.body.lastName,username: req.body.username,
-        password: req.body.password, posts: []});
-    newUser.save().then(user => res.json(user)).catch(err => console.log(err));
+router.post('/register', (req, res) => {
+
+    if (!req.body.username || !req.body.password) {
+        res.json({ success: false, msg: "Please send username and password" });
+    }
+    else {
+
+        const newUser = new User({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            username: req.body.username,
+            password: req.body.password,
+            posts: []
+        });
+
+        newUser.save()
+            .then(user => res.json({ success: true, msg: "Successfully registered new user" }))
+            .catch(err => {
+                console.log(err);
+                res.json({ success: false, msg: "Username already exists" })
+            });
+
+    }
 });
+
 
 //  @route POST api/items
 // @desc Create a post
 // @access Public
-router.post('/googleSignUp', (req,res)=> {
+router.post('/googleSignUp', (req, res) => {
     console.log("reached googleSignUp");
-    const newUser = new User({firstName:req.body.firstName, lastName:req.body.lastName,username: req.body.username,
-        signInMode: 'google', email:req.body.email, posts: []});
+    const newUser = new User({
+        firstName: req.body.firstName, lastName: req.body.lastName, username: req.body.username,
+        signInMode: 'google', email: req.body.email, posts: []
+    });
     console.log(newUser);
     newUser.save().then(user => res.json(user)).catch(err => console.log(err));
 });
 
-function intimateUser(mailAddress){
+function intimateUser(mailAddress) {
 
     //Turn on less secure apps over here https://myaccount.google.com/lesssecureapps
     var transporter = nodemailer.createTransport({
@@ -121,7 +149,7 @@ function intimateUser(mailAddress){
         text: 'Your account will be verified by one of our agents very soon'
     };
 
-    transporter.sendMail(mailOptions, function(error, info){
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log(error);
         } else {
@@ -131,17 +159,17 @@ function intimateUser(mailAddress){
 
 }
 
-router.post('/enterprise', (req, res) =>{
-   const enterpriseUser = new User({
-       firstname : req.body.firstname,
-       lastname : req.body.lastname,
-       email : req.body.email,
-       username : req.body.username,
-       password : req.body.password,
-       enterprise : true,
-       enterpriseActive: "pending",
-       posts :[]
-   })
+router.post('/enterprise', (req, res) => {
+    const enterpriseUser = new User({
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        email: req.body.email,
+        username: req.body.username,
+        password: req.body.password,
+        enterprise: true,
+        enterpriseActive: "pending",
+        posts: []
+    })
 
     enterpriseUser.save()
         .then((user) => {
@@ -155,10 +183,10 @@ router.post('/enterprise', (req, res) =>{
 //  @route Delete api/items/:id
 // @desc Delete a item
 // @access Public
-router.delete('/:id', (req,res)=> {
+router.delete('/:id', (req, res) => {
     User.findById(req.params.id)
-        .then(item => item.remove().then(() => res.json({success: true})))
-        .catch(err => res.status(404).json({success: false}));
+        .then(item => item.remove().then(() => res.json({ success: true })))
+        .catch(err => res.status(404).json({ success: false }));
 });
 
 module.exports = router;
