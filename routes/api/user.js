@@ -40,15 +40,18 @@ router.post('/isUserPresent', (req, res) => {
         console.log(user);
         if (err) {
             console.log(err);
-            return res.status(500).send();
+           // return res.status(500).send();
+            res.send({'success':false,'message':'Could not connect to Database'})
         }
 
         if (!user) {
             console.log("not found");
-            return res.status(404).send();
+            res.send({'success':false,'message':'User not found'})
+            //return res.status(404).send();
         }
 
-        return res.status(200).send();
+        //return res.status(200).send();
+        res.send({'success':true, 'userId':user._id, 'username':user.username});
     });
 
 });
@@ -131,6 +134,7 @@ router.post('/googleSignUp', (req, res) => {
     });
     console.log(newUser);
     newUser.save().then(user => res.json(user)).catch(err => console.log(err));
+    res.send({'success':true, 'userId':user._id, 'username':user.username});
 });
 
 function intimateUser(mailAddress) {
