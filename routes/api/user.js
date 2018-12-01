@@ -40,18 +40,18 @@ router.post('/isUserPresent', (req, res) => {
         console.log(user);
         if (err) {
             console.log(err);
-           // return res.status(500).send();
-            res.send({'success':false,'message':'Could not connect to Database'})
+            // return res.status(500).send();
+            res.send({ 'success': false, 'message': 'Could not connect to Database' })
         }
 
         if (!user) {
             console.log("not found");
-            res.send({'success':false,'message':'User not found'})
+            res.send({ 'success': false, 'message': 'User not found' })
             //return res.status(404).send();
         }
 
         //return res.status(200).send();
-        res.send({'success':true, 'userId':user._id, 'username':user.username});
+        res.send({ 'success': true, 'userId': user._id, 'username': user.username });
     });
 
 });
@@ -134,7 +134,7 @@ router.post('/googleSignUp', (req, res) => {
     });
     console.log(newUser);
     newUser.save().then(user => res.json(user)).catch(err => console.log(err));
-    res.send({'success':true, 'userId':user._id, 'username':user.username});
+    res.send({ 'success': true, 'userId': user._id, 'username': user.username });
 });
 
 function intimateUser(mailAddress) {
@@ -166,9 +166,10 @@ function intimateUser(mailAddress) {
 }
 
 router.post('/enterprise', (req, res) => {
+
     const enterpriseUser = new User({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
+        firstName: req.body.firstname,
+        lastName: req.body.lastname,
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
@@ -182,7 +183,7 @@ router.post('/enterprise', (req, res) => {
             res.status(200);
             res.json(user);
             //intimateUser(req.body.email);
-        })
+        });
 });
 
 
