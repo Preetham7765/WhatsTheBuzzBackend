@@ -36,6 +36,15 @@ const UserSchema = new Schema({
         type: Number,
         default: 0
     },
+    freeBuzz:{
+        type: Number,
+        default: 0
+    },
+    reputation:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Reputation',
+        required: true
+    },
     reputationScore: {
         type : Number,
         default : 0
@@ -51,4 +60,4 @@ const UserSchema = new Schema({
     posts: [{type: Schema.ObjectId, ref: 'topic'}]
 });
 
-module.exports = Item = mongoose.model('user', UserSchema);
+module.exports = User = mongoose.model('user', UserSchema);

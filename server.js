@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const items = require('./routes/api/item.js');
 const users = require('./routes/api/user.js');
 const topics = require('./routes/api/topic.js');
+const reputation = require('./routes/api/reputation');
 // const comments = require('./routes/api/comment.js');
 const scheduler = require('./services/scheduler.js');
 
@@ -36,5 +37,6 @@ app.use('/api/items', items);
 app.use('/api/users', users);
 app.use('/api/topics', topics);
 app.use('/api/comments', comments);
+app.use('/api/reputation', reputation);
 
 module.exports = app;
