@@ -233,48 +233,6 @@ module.exports = function (io) {
             });
     });
 
-    // router.put('/edit/:commentid/:context/', cors(), (request, response) => {
-    //     Comment.findOneAndUpdate({ _id: request.params.commentid }, {  description : request.params.context})
-    //     .then(item => {
-    //         response.json(item);
-    //     })
-    //     .catch(err => console.log(err));
-    // });
-
-    // router.put('/delete/:commentid/', cors(), (request, response) => {
-    //     Comment.remove({ _id : request.params.commentid })
-    //     .then(item => {
-    //         response.json(item);
-    //     })
-    //     .catch(err => console.log(err));
-    // });
-
-    router.put('/upvote/:userid/:commentid/', cors(), (request, response) => {
-        var authorId = null;
-        Comment.findOneAndUpdate({ _id: request.params.commentid }, { $inc: { votes: 1 }, $push: { votedby: request.params.userid } })
-            .then(item => {
-                authorId = item.author;
-                User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: 1 } })
-                    .catch(err => console.log(err));
-                response.json(item);
-            })
-            .catch(err => console.log(err));
-
-    });
-
-    router.put('/downvote/:userid/:commentid/', cors(), (request, response) => {
-        var authorId = null;
-        Comment.findOneAndUpdate({ _id: request.params.commentid }, { $inc: { votes: -1 }, $pull: { votedby: request.params.userid } })
-            .then(item => {
-                authorId = item.author;
-                User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: -1 } })
-                    .catch(err => console.log(err));
-                response.json(item);
-            })
-            .catch(err => console.log(err));
-
-    });
-
     router.put('report/:id', cors(), (request, response) => {
         Comment.findOneAndUpdate({ _id: request.params.id }, { $inc: { spamCount: 1 } })
             .then(item => response.json(item))
