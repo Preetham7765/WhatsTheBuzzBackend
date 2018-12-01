@@ -25,6 +25,35 @@ module.exports = function (io) {
             delete clientList[socket.id];
         });
 
+        socket.on("editComment",(data) => {
+            console.log("tend to edit comment");
+            Comment.findById(data._id)
+            .then((comment) => {
+                if(comment == null){
+                    throw new Error("Try to edit comment not exist");
+                }
+                comment.description = data.commentDesc;
+                comment.save();
+                console.log("send edit server");
+                socket.broadcast.to('room-' + clientList[socket.id]).emit("editComment", comment);
+                socket.emit("editComment", comment);
+            })
+            .catch((error) => {
+                console.log("edit error", error);
+            });
+        });
+
+        socket.on("deleteComment",(data) => {
+            console.log("tend to delete comment");
+            console.log("id : " + data._id);
+            Comment.deleteOne({ _id : data._id })
+            .then(item => {
+                socket.broadcast.to('room-' + clientList[socket.id]).emit("deleteComment", data);
+                socket.emit("deleteComment", data);
+            })
+            .catch(err => console.log(err));
+        });
+
         socket.on("addNewComment", (data) => {
             let newCommentData = {};
             console.log("add new comment", data);
@@ -77,6 +106,56 @@ module.exports = function (io) {
                 });
 
         });
+
+        socket.on("voteUpComment",(data) => {
+            Comment.findOneAndUpdate({ _id : data._id }, { $inc: { votes: 1 }, $push: { votedby: data.user } },{new: true})
+            .then(item => {
+                socket.broadcast.to('room-' + clientList[socket.id]).emit("vote", item);
+                socket.emit("vote", item);
+                authorId = item.author;
+                User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: 1 } })
+                    .catch(err => console.log(err));
+            })
+            .catch(err => console.log(err));
+        });
+
+        socket.on("voteDownComment",(data) => {
+            Comment.findOneAndUpdate({ _id : data._id }, { $inc: { votes: -1 }, $pull: { votedby: data.user } },{new: true})
+                .then(item => {
+                    authorId = item.author;
+                    User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: -1 } })
+                        .catch(err => console.log(err));
+                    socket.broadcast.to('room-' + clientList[socket.id]).emit("vote", item);
+                    socket.emit("vote", item);
+                })
+                .catch(err => console.log(err));
+        });
+
+        socket.on("voteUpTopic",(data) => {
+            Topic.findOneAndUpdate({ _id : data._id }, { $inc: { votes: 1 }, $push: { votedby: data.user } },{new: true})
+            .then(item => {
+                socket.broadcast.to('room-' + clientList[socket.id]).emit("vote", item);
+                socket.emit("vote", item);
+                authorId = item.author;
+                User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: 1 } })
+                    .catch(err => console.log(err));
+            })
+            .catch(err => console.log(err));
+        });
+
+        socket.on("voteDownTopic",(data) => {
+            Topic.findOneAndUpdate({ _id : data._id }, { $inc: { votes: -1 }, $pull: { votedby: data.user } },{new: true})
+                .then(item => {
+                    authorId = item.author;
+                    User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: -1 } })
+                        .catch(err => console.log(err));
+                    socket.broadcast.to('room-' + clientList[socket.id]).emit("vote", item);
+                    socket.emit("vote", item);
+                })
+                .catch(err => console.log(err));
+        });
+
+
         //getting connection request means 
         // create a room for each topic
         // check if a room with this topic is present
@@ -154,21 +233,21 @@ module.exports = function (io) {
             });
     });
 
-    router.put('/edit/:commentid/:context/', cors(), (request, response) => {
-        Comment.findOneAndUpdate({ _id: request.params.commentid }, {  description : request.params.context})
-        .then(item => {
-            response.json(item);
-        })
-        .catch(err => console.log(err));
-    });
+    // router.put('/edit/:commentid/:context/', cors(), (request, response) => {
+    //     Comment.findOneAndUpdate({ _id: request.params.commentid }, {  description : request.params.context})
+    //     .then(item => {
+    //         response.json(item);
+    //     })
+    //     .catch(err => console.log(err));
+    // });
 
-    router.put('/delete/:commentid/', cors(), (request, response) => {
-        Comment.remove({ _id : request.params.commentid })
-        .then(item => {
-            response.json(item);
-        })
-        .catch(err => console.log(err));
-    });
+    // router.put('/delete/:commentid/', cors(), (request, response) => {
+    //     Comment.remove({ _id : request.params.commentid })
+    //     .then(item => {
+    //         response.json(item);
+    //     })
+    //     .catch(err => console.log(err));
+    // });
 
     router.put('/upvote/:userid/:commentid/', cors(), (request, response) => {
         var authorId = null;
