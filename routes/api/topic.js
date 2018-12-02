@@ -37,13 +37,14 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
         .then(author => {
             //Have to create db.comments.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } ) in the database to make ttl active
             var currDate = new Date();
-            var startDate, endDate, expireAtDateTime
+            var startDate, endDate, expireAtDateTime;
             if (req.body.topicType === 'Event') {
                 startDate = new Date(req.body.startAt);
                 endDate = new Date(req.body.expireAt);
             } else {
                 currDate = new Date();
-                expireAtDateTime = currDate.setMinutes(currDate.getMinutes() + req.body.duration);
+                expireAtDateTime = new Date(currDate);
+                expireAtDateTime.setMinutes(currDate.getMinutes() + parseInt(req.body.duration));
             }
 
             const userLocation = [...req.body.location].map(el => parseFloat(el));
