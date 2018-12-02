@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const passport = require('passport');
 
 const Comment = require('../../model/comment');
 const User = require('../../model/user');
@@ -163,7 +164,7 @@ module.exports = function (io) {
         // otherwise create
     });
 
-    router.get('/:topicId', cors(), (request, response) => {
+    router.get('/:topicId', passport.authenticate('jwt', { session: false }), cors(), (request, response) => {
 
         const topicId = request.params.topicId;
 

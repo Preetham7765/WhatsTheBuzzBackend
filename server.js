@@ -5,8 +5,9 @@ const bodyParser = require('body-parser');
 const items = require('./routes/api/item.js');
 const users = require('./routes/api/user.js');
 const topics = require('./routes/api/topic.js');
+const passport = require('passport');
+
 const reputation = require('./routes/api/reputation');
-// const comments = require('./routes/api/comment.js');
 const scheduler = require('./services/scheduler.js');
 
 const app = express();
@@ -31,6 +32,8 @@ const server = app.listen(port, () => {
 let io = require('socket.io')(server); 
 
 const comments = require('./routes/api/comment.js')(io);
+
+app.use(passport.initialize());
 
 // Use Routes
 app.use('/api/items', items);

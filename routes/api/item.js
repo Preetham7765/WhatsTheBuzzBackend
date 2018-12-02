@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 
 // item model
 const Item = require('../../model/item');
@@ -7,10 +8,12 @@ const Item = require('../../model/item');
 //  @route GET api/items
 // @desc Get all items
 // @access Public
-router.get('/', (req,res)=> {
-   Item.find()
-       .sort({date: -1})
-       .then(items => res.json(items));
+router.get('/', passport.authenticate('jwt', { session: false}), (req,res)=> {
+    const token = getToken(req.headers);
+    if(token)
+        Item.find()
+            .sort({date: -1})
+            .then(items => res.json(items));
 });
 
 //  @route POST api/items
@@ -29,5 +32,19 @@ router.delete('/:id', (req,res)=> {
         .then(item => item.remove().then(() => res.json({success: true})))
         .catch(err => res.status(404).json({success: false}));
 });
+
+const getToken = (headers) => {
+    if (headers && headers.authorization) {
+      let parted = headers.authorization.split(' ');
+      if (parted.length === 2) {
+        return parted[1];
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  };
+
 
 module.exports = router;

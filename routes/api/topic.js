@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const request = require('request');
-
+const passport = require('passport');
 
 // topic model
 const Topic = require('../../model/topic');
@@ -12,7 +12,7 @@ const ScheduledEvent = require('../../model/ScheduledEvent');
 //  @route GET api/items
 // @desc Get all items
 // @access Public
-router.get('/', cors(),(req,res)=> {
+router.get('/', passport.authenticate('jwt', { session: false}), cors(),(req,res)=> {
     const latitude = parseFloat(req.query.latitude);
     const longitude = parseFloat(req.query.longitude);
     console.log("lat, long ", latitude, longitude);
@@ -31,7 +31,7 @@ router.get('/', cors(),(req,res)=> {
 //  @route POST api/topics
 // @desc Create a post
 // @access Public
-router.post('/', (req,res)=> {
+router.post('/', passport.authenticate('jwt', { session: false}), (req,res)=> {
     Author.findById(req.body.author)
     .then(author => {
         //Have to create db.comments.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } ) in the database to make ttl active
