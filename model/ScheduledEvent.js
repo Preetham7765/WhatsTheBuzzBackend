@@ -15,19 +15,19 @@ const ScheduledEvent = new Schema({
         required: true
     },
     loc: {
-        type: { type: String, enum: "Point", default: "Point"},
-        coordinates: { type: [ Number ] },
+        type: { type: String, enum: "Point", default: "Point" },
+        coordinates: { type: [Number] },
     },
-    region:{
+    region: {
         type: String,
     },
-    startAt:{
+    startAt: {
         type: Date,
     },
-    expireAt :{
+    expireAt: {
         type: Date,
     },
-    topicType:{
+    topicType: {
         type: String,
         required: true
     },
@@ -35,15 +35,15 @@ const ScheduledEvent = new Schema({
         type: Number,
         default: 0
     },
-    votedby:{
+    votedby: {
         type: [mongoose.Schema.Types.ObjectId],
-        default:[]
+        default: []
     },
     spamCount: {
         type: Number,
         default: 0
     },
-    duplicateCount:{
+    duplicateCount: {
         type: Number,
         default: 0
     },

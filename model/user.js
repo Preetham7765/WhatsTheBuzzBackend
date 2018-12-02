@@ -37,11 +37,11 @@ const UserSchema = new Schema({
         type: Number,
         default: 0
     },
-    freeBuzz:{
+    freeBuzz: {
         type: Number,
         default: 0
     },
-    reputation:{
+    reputation: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Reputation',
         required: true
@@ -85,7 +85,7 @@ UserSchema.pre('save', function (next) {
 });
 
 
-UserSchema.methods.comparePassword = function(pwd, cb){
+UserSchema.methods.comparePassword = function (pwd, cb) {
     bcrypt.compare(pwd, this.password, (err, IsMatch) => {
         console.log(err);
         if (err) {

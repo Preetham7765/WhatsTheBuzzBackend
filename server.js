@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 const db = require('./config/keys.js').mongoURI;
 
 // connect to Mongo
-mongoose.connect(db).then(()=>{
+mongoose.connect(db).then(() => {
     console.log('MongoDB Connected');
 }).catch(err => console.log(err));
 
@@ -29,7 +29,7 @@ const server = app.listen(port, () => {
     console.log(`Server started on port ${port}`)
     scheduler();
 });
-let io = require('socket.io')(server); 
+let io = require('socket.io')(server);
 
 const comments = require('./routes/api/comment.js')(io);
 
