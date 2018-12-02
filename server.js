@@ -7,6 +7,7 @@ const users = require('./routes/api/user.js');
 const topics = require('./routes/api/topic.js');
 const passport = require('passport');
 
+const reputation = require('./routes/api/reputation');
 const scheduler = require('./services/scheduler.js');
 
 const app = express();
@@ -39,5 +40,6 @@ app.use('/api/items', items);
 app.use('/api/users', users);
 app.use('/api/topics', topics);
 app.use('/api/comments', comments);
+app.use('/api/reputation', reputation);
 
 module.exports = app;

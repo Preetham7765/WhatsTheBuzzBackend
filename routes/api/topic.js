@@ -23,7 +23,6 @@ router.get('/', passport.authenticate('jwt', { session: false}), cors(),(req,res
                 }
         }})
         .then(topics => {
-            // console.log("sending topics", topics);
             res.json(topics);
         })
         .catch( error => {console.log("could not find any topics near by")});

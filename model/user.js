@@ -37,6 +37,15 @@ const UserSchema = new Schema({
         type: Number,
         default: 0
     },
+    freeBuzz:{
+        type: Number,
+        default: 0
+    },
+    reputation:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Reputation',
+        required: true
+    },
     reputationScore: {
         type: Number,
         default: 0
@@ -85,4 +94,4 @@ UserSchema.methods.comparePassword = function(pwd, cb){
         cb(null, IsMatch);
     });
 }
-module.exports = Item = mongoose.model('user', UserSchema);
+module.exports = User = mongoose.model('user', UserSchema);

@@ -8,6 +8,7 @@ const router = express.Router();
 
 // item model
 const User = require('../../model/user');
+const Reputation = require('../../model/reputation');
 
 //  @route GET api/items
 // @desc Get all items
@@ -20,7 +21,7 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
     User.findById(req.params.id)
-        .then(users => res.json(users).then(() => res.json({ sucess: true })))
+        .then(users => res.json(users).then(() => res.json({ success: true })))
         .catch(err => res.status(404).json({ success: false }));
 });
 
@@ -102,23 +103,26 @@ router.post('/register', (req, res) => {
         res.json({ success: false, msg: "Please send username and password" });
     }
     else {
+        const newReputation = new Reputation().save()
+            .then(reputation => {
 
-        const newUser = new User({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            username: req.body.username,
-            password: req.body.password,
-            posts: []
-        });
+                const newUser = new User({
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    email: req.body.email,
+                    username: req.body.username,
+                    password: req.body.password,
+                    reputation: reputation.id,
+                    posts: []
+                });
 
-        newUser.save()
-            .then(user => res.json({ success: true, msg: "Successfully registered new user" }))
-            .catch(err => {
-                console.log(err);
-                res.json({ success: false, msg: "Username already exists" })
-            });
-
+                newUser.save()
+                    .then(user => res.json({ success: true, msg: "Successfully registered new user" }))
+                    .catch(err => {
+                        console.log(err);
+                        res.json({ success: false, msg: "Username already exists" })
+                    });
+            })
     }
 });
 
