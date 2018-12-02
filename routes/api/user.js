@@ -171,22 +171,27 @@ function intimateUser(mailAddress) {
 
 router.post('/enterprise', (req, res) => {
 
-    const enterpriseUser = new User({
-        firstName: req.body.firstname,
-        lastName: req.body.lastname,
-        email: req.body.email,
-        username: req.body.username,
-        password: req.body.password,
-        enterprise: true,
-        enterpriseActive: "pending",
-        posts: []
-    })
+    const newReputation = new Reputation().save()
+        .then(reputation => {
 
-    enterpriseUser.save()
-        .then((user) => {
-            res.status(200);
-            res.json(user);
-            //intimateUser(req.body.email);
+            const enterpriseUser = new User({
+                firstName: req.body.firstname,
+                lastName: req.body.lastname,
+                email: req.body.email,
+                username: req.body.username,
+                password: req.body.password,
+                reputation: reputation.id,
+                enterprise: true,
+                enterpriseActive: "pending",
+                posts: []
+            })
+
+            enterpriseUser.save()
+                .then((user) => {
+                    res.status(200);
+                    res.json(user);
+                    //intimateUser(req.body.email);
+                });
         });
 });
 
