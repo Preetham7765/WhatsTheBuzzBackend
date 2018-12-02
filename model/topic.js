@@ -6,8 +6,8 @@ const TopicSchema = new Schema({
         required: true
     },
     description: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
@@ -15,19 +15,19 @@ const TopicSchema = new Schema({
         required: true
     },
     loc: {
-        type: { type: String, enum: "Point", default: "Point"},
-        coordinates: { type: [ Number ] },
+        type: { type: String, enum: "Point", default: "Point" },
+        coordinates: { type: [Number] },
     },
-    region:{
+    region: {
         type: String,
     },
-    startAt:{
+    startAt: {
         type: Date,
     },
-    expireAt :{
+    expireAt: {
         type: Date,
     },
-    topicType:{
+    topicType: {
         type: String,
         required: true
     },
@@ -35,15 +35,15 @@ const TopicSchema = new Schema({
         type: Number,
         default: 0
     },
-    votedby:{
+    votedby: {
         type: [mongoose.Schema.Types.ObjectId],
-        default:[]
+        default: []
     },
     spamCount: {
         type: Number,
         default: 0
     },
-    duplicateCount:{
+    duplicateCount: {
         type: Number,
         default: 0
     },
@@ -55,13 +55,13 @@ const TopicSchema = new Schema({
         default: Date.now
     }
 });
-TopicSchema.index({"loc": "2dsphere"});
-TopicSchema.index({ "expireAt" : 1 }, { expireAfterSeconds: 0 })
+TopicSchema.index({ "loc": "2dsphere" });
+TopicSchema.index({ "expireAt": 1 }, { expireAfterSeconds: 0 })
 
 let topicSchema = null;
-try{
+try {
     topicSchema = mongoose.model('topic', TopicSchema);
-}catch (e) {
+} catch (e) {
     topicSchema = mongoose.model('topic');
 }
 

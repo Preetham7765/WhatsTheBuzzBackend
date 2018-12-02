@@ -5,7 +5,9 @@ const bodyParser = require('body-parser');
 const items = require('./routes/api/item.js');
 const users = require('./routes/api/user.js');
 const topics = require('./routes/api/topic.js');
-// const comments = require('./routes/api/comment.js');
+const passport = require('passport');
+
+const reputation = require('./routes/api/reputation');
 const scheduler = require('./services/scheduler.js');
 
 const app = express();
@@ -17,7 +19,7 @@ app.use(bodyParser.json());
 const db = require('./config/keys.js').mongoURI;
 
 // connect to Mongo
-mongoose.connect(db).then(()=>{
+mongoose.connect(db).then(() => {
     console.log('MongoDB Connected');
 }).catch(err => console.log(err));
 
@@ -27,14 +29,17 @@ const server = app.listen(port, () => {
     console.log(`Server started on port ${port}`)
     scheduler();
 });
-let io = require('socket.io')(server); 
+let io = require('socket.io')(server);
 
 const comments = require('./routes/api/comment.js')(io);
+
+app.use(passport.initialize());
 
 // Use Routes
 app.use('/api/items', items);
 app.use('/api/users', users);
 app.use('/api/topics', topics);
 app.use('/api/comments', comments);
+app.use('/api/reputation', reputation);
 
 module.exports = app;

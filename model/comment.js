@@ -6,9 +6,9 @@ const CommentSchema = new Schema({
         type: Number,
         default: 0
     },
-    votedby:{
+    votedby: {
         type: [mongoose.Schema.Types.ObjectId],
-        default:[]
+        default: []
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
