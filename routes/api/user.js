@@ -19,12 +19,6 @@ router.get('/', (req, res) => {
         .then(users => res.json(users));
 });
 
-router.get('/:id', (req, res) => {
-    User.findById(req.params.id)
-        .then(users => res.json(users).then(() => res.json({ success: true })))
-        .catch(err => res.status(404).json({ success: false }));
-});
-
 
 //  @route GET api/items
 // @desc Get all items
@@ -204,6 +198,32 @@ router.delete('/:id', (req, res) => {
         .then(item => item.remove().then(() => res.json({ success: true })))
         .catch(err => res.status(404).json({ success: false }));
 });
+
+router.get('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    User.findById(req.params.id)
+        .then(user => {
+            if (user === null) {
+                res.status(404);
+                res.json({ errorMsg: "User not found" });
+                return;
+            }
+
+            const data = {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                reputationScore: user.reputationScore,
+                checkins: 0, // we should take it from db
+                buzzes: 6,
+                upvotes: 10,
+            }
+            res.json(data);
+        })
+        .catch(error => {
+            res.status(404);
+            res.json({ errorMsg: error.message });
+        });
+})
 
 
 router.get('/:id/reputation', passport.authenticate('jwt', { session: false }), (req, res) => {
