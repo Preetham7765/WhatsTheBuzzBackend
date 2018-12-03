@@ -244,6 +244,8 @@ router.get('/:id/reputation', passport.authenticate('jwt', { session: false }), 
                 res.json({ success: false, errorMsg: "Could not find user" });
                 return;
             }
+            console.log("user.reputationScore", user.reputationScore);
+            
             if (!user.enterprise && user.reputationScore > 10 && user.posts.length == 0) {
 
                 res.status(200);
@@ -251,7 +253,7 @@ router.get('/:id/reputation', passport.authenticate('jwt', { session: false }), 
                 return;
             }
             res.status(200);
-            console.log("user.reputationScore", user.reputationScore);
+            
             if (user.reputationScore < 10)
                 res.json({ success: false, errorMsg: "You don't not sufficient reputation" });
             else
