@@ -205,4 +205,34 @@ router.delete('/:id', (req, res) => {
         .catch(err => res.status(404).json({ success: false }));
 });
 
+
+router.get('/:id/reputation', passport.authenticate('jwt', { session: false }), (req, res) => {
+    const userId = req.params.id;
+    User.findById(userId)
+        .then((user) => {
+            if (user === null) {
+                res.status(400);
+                res.json({ success: false, errorMsg: "Could not find user" });
+                return;
+            }
+            if (!user.enterprise && user.reputationScore > 10 && user.posts.length == 0) {
+
+                res.status(200);
+                res.json({ success: true, errorMsg: "" });
+                return;
+            }
+            res.status(200);
+            console.log("user.reputationScore", user.reputationScore);
+            if (user.reputationScore < 10)
+                res.json({ success: false, errorMsg: "You don't not sufficient reputation" });
+            else
+                res.json({ success: false, errorMsg: "You already have a live buzz!" });
+        })
+        .catch(error => {
+            res.status(400);
+            res.json({ success: false, errorMsg: "Something went wrong in server " + error });
+        })
+
+});
+
 module.exports = router;

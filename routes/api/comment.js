@@ -138,7 +138,7 @@ module.exports = function (io) {
                     socket.broadcast.to('room-' + clientList[socket.id]).emit("vote", item);
                     socket.emit("vote", item);
                     authorId = item.author;
-                    User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: 1 } })
+                    User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: 2 } })
                         .catch(err => console.log(err));
                 })
                 .catch(err => console.log(err));
@@ -148,7 +148,7 @@ module.exports = function (io) {
             Topic.findOneAndUpdate({ _id: data._id }, { $inc: { votes: -1 }, $pull: { votedby: data.user } }, { new: true })
                 .then(item => {
                     authorId = item.author;
-                    User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: -1 } })
+                    User.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: -2 } })
                         .catch(err => console.log(err));
                     socket.broadcast.to('room-' + clientList[socket.id]).emit("vote", item);
                     socket.emit("vote", item);
