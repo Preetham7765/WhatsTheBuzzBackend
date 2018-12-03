@@ -20,11 +20,6 @@ router.get("/", (req, res) => {
     .then(users => res.json(users));
 });
 
-router.get("/:id", (req, res) => {
-  User.findById(req.params.id)
-    .then(users => res.json(users).then(() => res.json({ success: true })))
-    .catch(err => res.status(404).json({ success: false }));
-});
 
 //  @route GET api/items
 // @desc Get all items
@@ -213,6 +208,63 @@ router.delete("/:id", (req, res) => {
     .catch(err => res.status(404).json({ success: false }));
 });
 
+router.get('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    User.findById(req.params.id)
+        .then(user => {
+            if (user === null) {
+                res.status(404);
+                res.json({ errorMsg: "User not found" });
+                return;
+            }
+
+            const data = {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                reputationScore: user.reputationScore,
+                checkins: 0, // we should take it from db
+                buzzes: 6,
+                upvotes: 10,
+            }
+            res.json(data);
+        })
+        .catch(error => {
+            res.status(404);
+            res.json({ errorMsg: error.message });
+        });
+})
+
+
+router.get('/:id/reputation', passport.authenticate('jwt', { session: false }), (req, res) => {
+    const userId = req.params.id;
+    User.findById(userId)
+        .then((user) => {
+            if (user === null) {
+                res.status(400);
+                res.json({ success: false, errorMsg: "Could not find user" });
+                return;
+            }
+            console.log("user.reputationScore", user.reputationScore);
+            
+            if (!user.enterprise && user.reputationScore > 10 && user.posts.length == 0) {
+
+                res.status(200);
+                res.json({ success: true, errorMsg: "" });
+                return;
+            }
+            res.status(200);
+            
+            if (user.reputationScore < 10)
+                res.json({ success: false, errorMsg: "You don't not sufficient reputation" });
+            else
+                res.json({ success: false, errorMsg: "You already have a live buzz!" });
+        })
+        .catch(error => {
+            res.status(400);
+            res.json({ success: false, errorMsg: "Something went wrong in server " + error });
+        })
+
+});
 router.get("/logout", logout());
 
 /*router.get("/logout", function(req, res) {
