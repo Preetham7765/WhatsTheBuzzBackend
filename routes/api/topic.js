@@ -12,7 +12,7 @@ const ScheduledEvent = require('../../model/ScheduledEvent');
 //  @route GET api/items
 // @desc Get all items
 // @access Public
-router.get('/', passport.authenticate('jwt', { session: false }), cors(), (req, res) => {
+router.get('/', passport.authenticate('jwt', {session: false}), cors(), (req, res) => {
     const latitude = parseFloat(req.query.latitude);
     const longitude = parseFloat(req.query.longitude);
     console.log("lat, long ", latitude, longitude);
@@ -26,13 +26,15 @@ router.get('/', passport.authenticate('jwt', { session: false }), cors(), (req, 
         .then(topics => {
             res.json(topics);
         })
-        .catch(error => { console.log("could not find any topics near by") });
+        .catch(error => {
+            console.log("could not find any topics near by")
+        });
 });
 
 //  @route POST api/topics
 // @desc Create a post
 // @access Public
-router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.post('/', passport.authenticate('jwt', {session: false}), (req, res) => {
     Author.findById(req.body.author)
         .then(author => {
             //Have to create db.comments.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } ) in the database to make ttl active
@@ -49,7 +51,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 
             const userLocation = [...req.body.location].map(el => parseFloat(el));
             request.post("http://127.0.0.1:5001/body",
-                { json: userLocation },
+                {json: userLocation},
                 (err, res, body) => {
                     console.log(body);
                 })
@@ -59,7 +61,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
                     title: req.body.title,
                     description: req.body.description,
                     author: author,
-                    loc: { type: 'Point', coordinates: userLocation },
+                    loc: {type: 'Point', coordinates: userLocation},
                     comments: [],
                     startAt: startDate,
                     expireAt: endDate,
@@ -72,7 +74,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
                     title: req.body.title,
                     description: req.body.description,
                     author: author,
-                    loc: { type: 'Point', coordinates: userLocation },
+                    loc: {type: 'Point', coordinates: userLocation},
                     comments: [],
                     startAt: Date.now(),
                     expireAt: expireAtDateTime,
@@ -82,7 +84,9 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
             }
             // console.log(newTopic);
         })
-        .catch(err => { console.log("undefined error here", err) });
+        .catch(err => {
+            console.log("undefined error here", err)
+        });
 });
 
 // @route PUT api/topics
@@ -90,10 +94,10 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 // @access Public
 router.put('/upvote/:userid/:topicid/', cors(), (request, response) => {
     var authorId = null;
-    Topic.findOneAndUpdate({ _id: request.params.topicid }, { $inc: { votes: 1 }, $push: { votedby: request.params.userid } })
+    Topic.findOneAndUpdate({_id: request.params.topicid}, {$inc: {votes: 1}, $push: {votedby: request.params.userid}})
         .then(item => {
             authorId = item.author;
-            Author.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: 2 } })
+            Author.findOneAndUpdate({_id: authorId}, {$inc: {reputationScore: 2}})
                 .catch(err => console.log(err));
             response.json(item);
         })
@@ -105,10 +109,10 @@ router.put('/upvote/:userid/:topicid/', cors(), (request, response) => {
 // @access Public
 router.put('/downvote/:userid/:topicid/', cors(), (request, response) => {
     var authorId = null;
-    Topic.findOneAndUpdate({ _id: request.params.topicid }, { $inc: { votes: -1 }, $pull: { votedby: request.params.userid } })
+    Topic.findOneAndUpdate({_id: request.params.topicid}, {$inc: {votes: -1}, $pull: {votedby: request.params.userid}})
         .then(item => {
             authorId = item.author;
-            Author.findOneAndUpdate({ _id: authorId }, { $inc: { reputationScore: -2 } })
+            Author.findOneAndUpdate({_id: authorId}, {$inc: {reputationScore: -2}})
                 .catch(err => console.log(err));
             response.json(item);
         })
@@ -120,8 +124,8 @@ router.put('/downvote/:userid/:topicid/', cors(), (request, response) => {
 // @access Public
 router.delete('/:id', (req, res) => {
     Topic.findById(req.params.id)
-        .then(item => item.remove().then(() => res.json({ success: true })))
-        .catch(err => res.status(404).json({ success: false }));
+        .then(item => item.remove().then(() => res.json({success: true})))
+        .catch(err => res.status(404).json({success: false}));
 });
 
 module.exports = router;
