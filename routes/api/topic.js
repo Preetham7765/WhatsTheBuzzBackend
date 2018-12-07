@@ -126,8 +126,7 @@ module.exports = function (io) {
                         topicType: req.body.topicType
                     });
                     newTopic.save().then(topic => {
-                        author.posts.push(topic._id);
-                        author.save().then(_ => res.json(topic));
+                        res.json(topic);
                     }).catch(err => console.log(err));
                 }
                 // console.log(newTopic);
