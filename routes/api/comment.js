@@ -11,8 +11,11 @@ const Topic = require('../../model/topic');
 var clientList = {}
 
 module.exports = function (io) {
-    io.on('connection', (socket) => {
-        console.log("Got connection request");
+
+    let commentNsp = io.of('/comments');
+
+    commentNsp.on('connection', (socket) => {
+        console.log("Got connection request in comments");
 
         socket.on("addUser", (topicId) => {
             console.log("Adding new user to  chat room", topicId);
