@@ -31,6 +31,10 @@ const TopicSchema = new Schema({
         type: String,
         required: true
     },
+    regionId: {
+        type: String,
+        require: true
+    },
     votes: {
         type: Number,
         default: 0
