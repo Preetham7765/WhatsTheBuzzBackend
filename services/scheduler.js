@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const ScheduledEvent = require('../model/ScheduledEvent');
 const Topic = require('../model/topic');
+const  r = require('rethinkdb');
 mongoose.connect('mongodb://admin:oosd-team-1@ds143683.mlab.com:43683/mern_tut');
-
+var connection = null;
 var scheduler = () => setInterval(() => {
     var currDateTime = new Date();
     //console.log("scheduler running");
@@ -23,13 +24,20 @@ var scheduler = () => setInterval(() => {
                     description: event.description,
                     author: event.author,
                     loc: { type: 'Point', coordinates: event.loc.coordinates },
+                    regionId: event.regionId,
                     comments: [],
                     startAt: event.startAt,
                     expireAt: event.expireAt,
                     topicType: event.topicType
                 });
+                r.connect({host: '35.171.16.49'}, function(err, conn) {
+                    if(err) throw err;
+                    connection =conn;
+                    r.db('wtblive').table('topics').insert(JSON.parse(JSON.stringify(newTopic))).run(conn, (err, result)=>{
+                        if (err) throw err;
+                    });
+                });
                 newTopic.save().catch(err => console.log(err));
-
                 //remove event from scheduled event
                 ScheduledEvent.deleteOne({ _id: event._id }, (err) => console.log(err));
             });

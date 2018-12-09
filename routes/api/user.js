@@ -252,7 +252,7 @@ router.get('/:id/reputation', passport.authenticate('jwt', {session: false}), (r
                 res.json({success: false, errorMsg: "Could not find user"});
                 return;
             }
-            console.log("user.reputationScore", user.reputationScore);
+            console.log("user.reputationScore", user.reputationScore, user.posts.length);
 
             if (!user.enterprise && user.reputationScore > 10 && user.posts.length == 0) {
 
@@ -261,9 +261,8 @@ router.get('/:id/reputation', passport.authenticate('jwt', {session: false}), (r
                 return;
             }
             res.status(200);
-
-            if (user.reputationScore < 10)
-                res.json({success: false, errorMsg: "You don't not sufficient reputation"});
+            if (user.reputationScore <= 10)
+                res.json({success: false, errorMsg: "You don't have sufficient reputation"});
             else
                 res.json({success: false, errorMsg: "You already have a live buzz!"});
         })

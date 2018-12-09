@@ -31,6 +31,10 @@ const TopicSchema = new Schema({
         type: String,
         required: true
     },
+    regionId: {
+        type: String,
+        required: true
+    },
     votes: {
         type: Number,
         default: 0
@@ -60,9 +64,9 @@ TopicSchema.index({ "expireAt": 1 }, { expireAfterSeconds: 0 })
 
 let topicSchema = null;
 try {
-    topicSchema = mongoose.model('topic', TopicSchema);
+    topicSchema = mongoose.model('topics', TopicSchema);
 } catch (e) {
-    topicSchema = mongoose.model('topic');
+    topicSchema = mongoose.model('topics');
 }
 
 module.exports = Item = topicSchema;

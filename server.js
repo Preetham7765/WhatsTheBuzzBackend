@@ -4,13 +4,14 @@ const bodyParser = require('body-parser');
 
 const items = require('./routes/api/item.js');
 const users = require('./routes/api/user.js');
-const topics = require('./routes/api/topic.js');
+
 const passport = require('passport');
 
 const reputation = require('./routes/api/reputation');
 const scheduler = require('./services/scheduler.js');
 
 const app = express();
+
 
 //Body parser middleware
 app.use(bodyParser.json());
@@ -29,8 +30,10 @@ const server = app.listen(port, () => {
     console.log(`Server started on port ${port}`)
     scheduler();
 });
-let io = require('socket.io')(server);
 
+const io = require('socket.io')(server);
+
+const topics = require('./routes/api/topic.js')(io);
 const comments = require('./routes/api/comment.js')(io);
 
 app.use(passport.initialize());
