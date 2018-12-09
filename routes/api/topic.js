@@ -57,21 +57,7 @@ module.exports = function (io) {
         });
         // {"id": "", "title": "", "description": "" , location: ""}
         // send whatever u sent to the client
-        r.connect({host: '35.171.16.49'}, function(err, conn) {
-            if(err) throw err;
-            connection = conn;
-            r.db('wtblive').table('topics')
-                .changes()
-                .run(connection, function(err, cursor){
-                    if (err) throw err;
-                    cursor.each(function(err, row){
-                        if(err) throw err;
-                        //working -emitting changes to client
-                        console.log("topic.js: rethink broadcasting to clients " , row['new_val']['regionId']);
-                        topicNsp.in('room-'+row['new_val']['regionId']).emit("updateTopic",row);
-                    });
-                });
-        });
+        
 
         // socket.on("newTopic", topic => {
         //     // assume it has a region
@@ -79,6 +65,26 @@ module.exports = function (io) {
         // });
 
     });
+
+    r.connect({host: '35.171.16.49'}, function(err, conn) {
+        if(err) throw err;
+        connection = conn;
+        r.db('wtblive').table('topics')
+            .changes()
+            .run(connection, function(err, cursor){
+                if (err) throw err;
+                cursor.each(function(err, row){
+                    if(err) throw err;
+                    //working -emitting changes to client
+                    console.log("topic.js: rethink broadcasting to clients " , row['new_val']['regionId']);
+                    topicNsp.in('room-'+row['new_val']['regionId']).emit("updateTopic",row);
+                });
+            });
+    });
+
+
+
+
 
     router.get('/', passport.authenticate('jwt', { session: false }), cors(), (req, res) => {
         const latitude = parseFloat(req.query.latitude);
