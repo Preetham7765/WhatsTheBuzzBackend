@@ -38,8 +38,8 @@ module.exports = function (io) {
                 else {
                     regionUserMap.set(region, new Array(socket.id));
                 }
-                console.log("Adding user to region", region);
-                socket.join('room-' + region);
+                socket.join('room-'+ region);
+                console.log(socket.rooms);
             });
         });
         // { "id": "", regions: []}
@@ -57,7 +57,7 @@ module.exports = function (io) {
         });
         // {"id": "", "title": "", "description": "" , location: ""}
         // send whatever u sent to the client
-        r.connect({host: 'localhost', port: 28015}, function(err, conn) {
+        r.connect({host: '35.171.16.49'}, function(err, conn) {
             if(err) throw err;
             connection = conn;
             r.db('wtblive').table('topics')
@@ -67,7 +67,8 @@ module.exports = function (io) {
                     cursor.each(function(err, row){
                         if(err) throw err;
                         //working -emitting changes to client
-                        socket.broadcast.to('room-'+row['new_val']['regionId']).emit("updateTopic",row);
+                        console.log("topic.js: rethink broadcasting to clients " , row['new_val']['regionId']);
+                        topicNsp.in('room-'+row['new_val']['regionId']).emit("updateTopic",row);
                     });
                 });
         });
@@ -141,7 +142,7 @@ module.exports = function (io) {
                         expireAt: expireAtDateTime,
                         topicType: req.body.topicType
                     });
-                    r.connect({host: 'localhost', port: 28015}, function(err, conn) {
+                    r.connect({host: '35.171.16.49'}, function(err, conn) {
                         if(err) throw err;
                         connection =conn;
                         r.db('wtblive').table('topics').insert(JSON.parse(JSON.stringify(newTopic))).run(conn, (err, result)=>{

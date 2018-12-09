@@ -30,17 +30,14 @@ var scheduler = () => setInterval(() => {
                     expireAt: event.expireAt,
                     topicType: event.topicType
                 });
-                r.connect({host: 'localhost', port: 28015}, function(err, conn) {
+                r.connect({host: '35.171.16.49'}, function(err, conn) {
                     if(err) throw err;
                     connection =conn;
-                    console.log(newTopic);
                     r.db('wtblive').table('topics').insert(JSON.parse(JSON.stringify(newTopic))).run(conn, (err, result)=>{
                         if (err) throw err;
-                        console.log(JSON.stringify(result, null, 2));
                     });
                 });
                 newTopic.save().catch(err => console.log(err));
-
                 //remove event from scheduled event
                 ScheduledEvent.deleteOne({ _id: event._id }, (err) => console.log(err));
             });
