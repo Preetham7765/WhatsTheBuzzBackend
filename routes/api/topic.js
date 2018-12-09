@@ -3,19 +3,19 @@ const router = express.Router();
 const cors = require('cors');
 const request = require('request');
 const passport = require('passport');
+const r = require('rethinkdb');
 
 // topic model
 const Topic = require('../../model/topic');
 const Author = require('../../model/user');
 const ScheduledEvent = require('../../model/ScheduledEvent');
-
 //  @route GET api/items
 // @desc Get all items
 // @access Public
 
 var regionUserMap = new Map();
 var userSocketMap = new Map();
-
+var connection =null;
 module.exports = function (io) {
 
     topicNsp = io.of('/topics');
@@ -57,10 +57,25 @@ module.exports = function (io) {
         });
         // {"id": "", "title": "", "description": "" , location: ""}
         // send whatever u sent to the client
-        socket.on("newTopic", topic => {
-            // assume it has a region
-            socket.broadcast.to('room-' + topic.regionId).emit("updateTopic", topic);
+        r.connect({host: 'localhost', port: 28015}, function(err, conn) {
+            if(err) throw err;
+            connection = conn;
+            r.db('wtblive').table('topics')
+                .changes()
+                .run(connection, function(err, cursor){
+                    if (err) throw err;
+                    cursor.each(function(err, row){
+                        if(err) throw err;
+                        //working -emitting changes to client
+                        socket.broadcast.to('room-'+row['new_val']['regionId']).emit("updateTopic",row);
+                    });
+                });
         });
+
+        // socket.on("newTopic", topic => {
+        //     // assume it has a region
+        //     socket.broadcast.to('room-' + topic.regionId).emit("updateTopic", topic);
+        // });
 
     });
 
@@ -105,12 +120,13 @@ module.exports = function (io) {
                         title: req.body.title,
                         description: req.body.description,
                         author: author,
+                        regionId: req.body.region,
                         loc: { type: 'Point', coordinates: userLocation },
                         comments: [],
                         startAt: startDate,
                         expireAt: endDate,
                         topicType: req.body.topicType
-                    })
+                    });
                     newScheduledEvent.save().then(user => res.json(user)).catch(error => console.log(error));
                 }
                 else {
@@ -124,6 +140,14 @@ module.exports = function (io) {
                         startAt: Date.now(),
                         expireAt: expireAtDateTime,
                         topicType: req.body.topicType
+                    });
+                    r.connect({host: 'localhost', port: 28015}, function(err, conn) {
+                        if(err) throw err;
+                        connection =conn;
+                        r.db('wtblive').table('topics').insert(JSON.parse(JSON.stringify(newTopic))).run(conn, (err, result)=>{
+                            if (err) throw err;
+                            // console.log(JSON.stringify(result, null, 2));
+                        });
                     });
                     newTopic.save().then(topic => {
                         res.json(topic);
