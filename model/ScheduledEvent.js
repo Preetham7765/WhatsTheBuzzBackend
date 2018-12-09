@@ -18,8 +18,9 @@ const ScheduledEvent = new Schema({
         type: { type: String, enum: "Point", default: "Point" },
         coordinates: { type: [Number] },
     },
-    region: {
+    regionId: {
         type: String,
+        required: true
     },
     startAt: {
         type: Date,

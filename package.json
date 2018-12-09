@@ -28,11 +28,14 @@
     "jsonwebtoken": "^8.4.0",
     "mocha": "^5.2.0",
     "mongoose": "^5.3.13",
+    "mongoose-observer": "^0.2.1",
     "nodemailer": "^4.7.0",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "request": "^2.88.0",
-    "socket.io": "^2.1.1"
+    "rethinkdb": "^2.3.3",
+    "socket.io": "^2.1.1",
+    "underscore": "^1.9.1"
   },
   "devDependencies": {
     "istanbul": "^0.4.5",
