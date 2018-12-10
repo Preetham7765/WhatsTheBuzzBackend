@@ -36,6 +36,14 @@ const UserSchema = new Schema({
         type: Number,
         default: 0
     },
+    lastFree: {
+        type: Date,
+        default: Date.now
+    },
+    buzzes: {
+        type: Number,
+        default: 0
+    },
     freeBuzz: {
         type: Number,
         default: 0
@@ -57,7 +65,7 @@ const UserSchema = new Schema({
         type: String,
         default: "App"
     },
-    posts: [{ type: Schema.ObjectId, ref: 'topic' }]
+    posts: [{type: Schema.ObjectId, ref: 'topic'}]
 });
 
 
