@@ -52,7 +52,8 @@ module.exports = function (io) {
                 regionUserMap.set(key, value.filter(el => el !== socket.id));
             });
 
-            userInfo.regions.forEach(region => socket.leave('room-' + region));
+            if (userInfo.regions !== undefined)
+                userInfo.regions.forEach(region => socket.leave('room-' + region));
 
         });
         // {"id": "", "title": "", "description": "" , location: ""}
@@ -76,7 +77,8 @@ module.exports = function (io) {
                 cursor.each(function (err, row) {
                     if (err) throw err;
                     //working -emitting changes to client
-                    if (row['new_val'] !== null){
+
+                    if (row['new_val'] !== null) {
                         console.log("topic.js: rethink broadcasting to clients ");
                         topicNsp.in('room-' + row['new_val']['regionId']).emit("updateTopic", row);
                     }
