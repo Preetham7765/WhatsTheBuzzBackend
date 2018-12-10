@@ -262,7 +262,7 @@ router.get('/:id/reputation', passport.authenticate('jwt', {session: false}), (r
             }
             res.status(200);
             if (user.reputationScore <= 10)
-                res.json({success: false, errorMsg: "You don't have sufficient reputation"});
+                res.json({success: false, errorMsg: "Earn more reputation to create buzzes"});
             else
                 res.json({success: false, errorMsg: "You already have a live buzz!"});
         })

@@ -51,26 +51,13 @@ module.exports = function (io) {
                 regionUserMap.set(key, value.filter(el => el !== socket.id));
             });
 
-            userInfo.regions.forEach(region => socket.leave('room-' + region));
+            if (userInfo.regions !== undefined)
+                userInfo.regions.forEach(region => socket.leave('room-' + region));
 
         });
         // {"id": "", "title": "", "description": "" , location: ""}
         // send whatever u sent to the client
-        r.connect({host: '35.171.16.49'}, function (err, conn) {
-            if (err) throw err;
-            connection = conn;
-            r.db('wtblive').table('topics')
-                .changes()
-                .run(connection, function (err, cursor) {
-                    if (err) throw err;
-                    cursor.each(function (err, row) {
-                        if (err) throw err;
-                        //working -emitting changes to client
-                        console.log("topic.js: rethink broadcasting to clients ", row['new_val']['regionId']);
-                        topicNsp.in('room-' + row['new_val']['regionId']).emit("updateTopic", row);
-                    });
-                });
-        });
+
 
         // socket.on("newTopic", topic => {
         //     // assume it has a region
@@ -79,7 +66,30 @@ module.exports = function (io) {
 
     });
 
-    router.get('/', passport.authenticate('jwt', {session: false}), cors(), (req, res) => {
+    r.connect({ host: '35.171.16.49' }, function (err, conn) {
+        if (err) throw err;
+        connection = conn;
+        r.db('wtblive').table('topics')
+            .changes()
+            .run(connection, function (err, cursor) {
+                if (err) { console.log("Error from rethinkdb", error); };
+                cursor.each(function (err, row) {
+                    if (err) throw err;
+                    //working -emitting changes to client
+
+                    if (row['new_val'] !== null) {
+                        console.log("topic.js: rethink broadcasting to clients ");
+                        topicNsp.in('room-' + row['new_val']['regionId']).emit("updateTopic", row);
+                    }
+                });
+            });
+    });
+
+
+
+
+
+    router.get('/', passport.authenticate('jwt', { session: false }), cors(), (req, res) => {
         const latitude = parseFloat(req.query.latitude);
         const longitude = parseFloat(req.query.longitude);
         console.log("lat, long ", latitude, longitude);
@@ -142,7 +152,8 @@ module.exports = function (io) {
                         expireAt: expireAtDateTime,
                         topicType: req.body.topicType
                     });
-                    r.connect({host: '35.171.16.49'}, function (err, conn) {
+
+                    r.connect({ host: '35.171.16.49' }, function (err, conn) {
                         if (err) throw err;
                         connection = conn;
                         r.db('wtblive').table('topics').insert(JSON.parse(JSON.stringify(newTopic))).run(conn, (err, result) => {
