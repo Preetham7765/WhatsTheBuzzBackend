@@ -76,9 +76,10 @@ module.exports = function (io) {
                 cursor.each(function (err, row) {
                     if (err) throw err;
                     //working -emitting changes to client
-                    console.log("topic.js: rethink broadcasting to clients ");
-                    if (row['new_val'] !== undefined)
+                    if (row['new_val'] !== null){
+                        console.log("topic.js: rethink broadcasting to clients ");
                         topicNsp.in('room-' + row['new_val']['regionId']).emit("updateTopic", row);
+                    }
                 });
             });
     });
